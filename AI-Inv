@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AIInv : MonoBehaviour
+{
+
+    public GameObject Spider;
+    float EvoAmount = 0.0f;
+
+
+
+    public void Awake()
+    {
+        EvoAmount = Random.Range(5, 10);
+        Debug.Log(EvoAmount);
+
+    }
+
+
+    public int NumberOfFood
+    {
+        get; private set;
+    }
+
+    public void FoodCollected()
+    {
+        NumberOfFood++;
+        int SpiderSize = Random.Range(9, 10);
+
+
+        if (NumberOfFood == EvoAmount)
+        {
+            Spider.transform.localScale = new Vector3(SpiderSize, SpiderSize, SpiderSize);
+
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.Chonk();
+
+            Debug.Log("Chonk");
+
+
+
+            //Debug.Log("Hello World");
+        }
+
+    }
+
+
+
+    
+}
