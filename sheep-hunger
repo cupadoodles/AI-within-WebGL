@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Hunger : MonoBehaviour
+{
+    public Rect timerRect;
+    float startTime = 0.0f;
+    private string currentTime;
+    public Text currentTimeTwo;
+
+    void Start()
+    {
+        startTime = Random.Range(10, 20);
+        Debug.Log(startTime);
+
+
+    }
+    void Update()
+    {
+
+        startTime -= Time.deltaTime;
+        currentTime = string.Format("{0:0.0}", startTime);
+        if (startTime <= 0)
+        {
+            startTime = 0;
+            Destroy(gameObject);
+
+        }
+
+        currentTimeTwo.text = currentTime;
+
+
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag.Equals("Bait"))
+        {
+            startTime += 1;
+            //Debug.Log("NOM");
+        }
+    }
+}
