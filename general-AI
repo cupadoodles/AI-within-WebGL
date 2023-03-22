@@ -1,0 +1,460 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public class AIFollow : MonoBehaviour
+{
+    float speed = 0.0f;
+    public Rigidbody rb;
+    public GameObject repoTarget;
+    public GameObject waterTarget;
+    public GameObject target;
+    public float dist;
+    public float distWater;
+    public float tetherRange;
+    public int range;
+    public int babySpiderCount = 2;
+
+    private NavMeshAgent agent;
+    public float radius;
+    public GameObject Preditor;
+    public float RunFromPrayDist;
+    //REPODUCTION
+    public float repoStartTime = 0.0f;
+    private string repoCurrentTime;
+    public Text repoCurrentTimeTwo;
+
+    //REPODUCTION
+    public float lifeStartTime = 0.0f;
+    private string lifeCurrentTime;
+    public Text lifeCurrentTimeTwo;
+
+    //Spiders
+    public GameObject babySpider;
+    public GameObject bbbbabySpider;
+
+    public float spiderSpawnRadius;
+    public float spiderSpawnCollisionCheckRadius;
+    public float raycastDistance = 1f;
+    public LayerMask GroundLayer;
+
+    //WATER
+    public float waterStartTime = 0.0f;
+    private string WaterCurrentTime;
+    public Text WaterCurrentTimeTwo;
+
+    //HUNGER
+    public float startTime = 0.0f;
+    private string currentTime;
+    public Text currentTimeTwo;
+
+
+    public static FlyMovemnt Instance;
+    public float Range;
+
+
+    public GameObject cubes;
+    public float cubeSpawnRadius;
+    public float spawnCollisionCheckRadius;
+    public float cubeRaycastDistance = 5f;
+
+
+    public GameObject sheepParticals;
+    public GameObject waterParticals;
+
+
+
+
+
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        speed = Random.Range(20, 30);
+
+        agent = GetComponent<NavMeshAgent>();
+        // Preditor = GameObject.FindWithTag("Spider");
+
+
+
+
+        repoStartTime = Random.Range(37, 37);
+        waterStartTime = Random.Range(30, 30);
+        startTime = Random.Range(40, 40);
+
+
+
+
+        Debug.Log(startTime);
+        float x = transform.position.x;
+        float y = transform.position.y;
+        float z = transform.position.z;
+
+
+    }
+
+
+
+
+
+    void Update()
+    {
+        //life
+        lifeStartTime += (Time.deltaTime);
+        lifeCurrentTime = string.Format("{0:0.0 Life Time}", lifeStartTime);
+        lifeCurrentTimeTwo.text = lifeCurrentTime;
+
+        //Reproduction
+        repoStartTime -= (Time.deltaTime);
+        repoCurrentTime = string.Format("{0:0.0  repo}", repoStartTime);
+        repoCurrentTimeTwo.text = repoCurrentTime;
+
+        //WATER
+        waterStartTime -= (Time.deltaTime);
+        WaterCurrentTime = string.Format("{0:0.0 Water}", waterStartTime);
+        WaterCurrentTimeTwo.text = WaterCurrentTime;
+
+        //HUNGER
+        startTime -= Time.deltaTime;
+        currentTime = string.Format("{0:0.0} Food", startTime);
+
+
+
+        if (startTime >= 21)
+        {
+
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTarget();
+
+        }
+
+        if (lifeStartTime <= 10)
+        {
+
+            gameObject.tag = "babySpider";
+            Debug.Log("TAG");
+        }
+
+
+        else if (lifeStartTime >= 10)
+        {
+
+            gameObject.tag = "Spider";
+            Debug.Log("TAG");
+
+
+                int SpiderSizeAdult = Random.Range(6, 6);
+                cubes.transform.localScale = new Vector3(SpiderSizeAdult, SpiderSizeAdult, SpiderSizeAdult);
+            
+
+
+            
+            
+
+
+        }
+
+
+
+
+
+        else if (repoStartTime >= 30f)
+        {
+
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTarget();
+
+        }
+
+        else if (waterStartTime <= 20f)
+        {
+
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTargetWater();
+
+        }
+
+
+        else if (repoStartTime <= 30f)
+       {
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTargetMate();
+       }
+
+
+
+        else if (repoStartTime == 1f)
+       {
+            Destroy(gameObject);
+
+        }
+
+
+
+        else if (startTime == 1f)
+        {
+            Destroy(gameObject);
+
+        }
+
+
+        currentTimeTwo.text = currentTime;
+
+
+        InvokeRepeating("DisCheck", 0, 0.5f);
+        if (waterTarget == null)
+        {
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTargetWater();
+
+        }
+        if (target == null)
+        {
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTarget();
+
+        }
+        if (repoTarget == null)
+        {
+            AIFollow AIFollow = GetComponent<AIFollow>();
+            AIFollow.FindTargetMate();
+
+        }
+
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Rest();
+        }
+
+       
+              
+    }
+    public void Chonk()
+    {
+
+        int SpiderSize = Random.Range(9, 9);
+        cubes.transform.localScale = new Vector3(SpiderSize, SpiderSize, SpiderSize);
+
+        speed -= Random.Range(1, 6);
+
+
+        
+
+    }
+    public void FindTargetMate()
+    {
+        repoTarget = GameObject.FindWithTag("Spider");
+    }
+    public void FindTargetWater()
+    {
+        waterTarget = GameObject.FindWithTag("Water");
+    }
+    public void FindTarget()
+    {
+        target = GameObject.FindWithTag("Bait");
+    }
+
+
+
+
+    public void DisCheck()
+    {
+
+
+        if (repoStartTime >= 30)
+        {
+            float dist = Vector3.Distance(this.transform.position, target.transform.position);
+            if (dist < range)
+            {
+                Vector3 pos = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
+                rb.MovePosition(pos);
+
+            }
+        }
+
+
+        else if (waterStartTime <= 20)
+        {
+
+            float distWater = Vector3.Distance(this.transform.position, waterTarget.transform.position);
+            if (distWater < range)
+            {
+                Vector3 pos = Vector3.MoveTowards(transform.position, waterTarget.transform.position, speed * Time.deltaTime);
+                rb.MovePosition(pos);
+
+            }
+
+        }
+
+
+        else if (repoStartTime <= 30)
+        {
+
+
+
+            float dist = Vector3.Distance(this.transform.position, repoTarget.transform.position);
+            if (dist < range)
+            {
+                Vector3 pos = Vector3.MoveTowards(transform.position, repoTarget.transform.position, speed * Time.deltaTime);
+                rb.MovePosition(pos);
+
+            }
+
+        }
+
+
+
+        else if (startTime >= 21)
+        {
+
+
+            float dist = Vector3.Distance(this.transform.position, target.transform.position);
+            if (dist < range)
+            {
+                Vector3 pos = Vector3.MoveTowards(transform.position, target.transform.position, speed * Time.deltaTime);
+                rb.MovePosition(pos);
+
+            }
+        }
+
+
+
+
+    }
+
+    IEnumerator SpawnObjectAfterDelay(GameObject babySpider, float delay)
+    {
+        yield return new WaitForSeconds(20f);
+        Instantiate(babySpider, transform.position, transform.rotation);
+    }
+
+
+    public void OnCollisionEnter(Collision collision)
+    {
+
+
+        if (collision.gameObject.tag.Equals("Bait"))
+        {
+            waterTarget = null;
+            repoTarget = null;
+
+            Destroy(collision.gameObject);
+
+            AIInv AIInv = GetComponent<AIInv>();
+            AIInv.FoodCollected();
+
+            startTime += 5;
+            Debug.Log("NOM");
+
+            Instantiate(sheepParticals, transform.position, Quaternion.identity);
+
+
+        }
+
+        float currentX = this.transform.position.x;
+        float currentZ = this.transform.position.z;
+
+
+        if (collision.gameObject.tag.Equals("Spider"))
+        {
+
+            if (repoStartTime <= 30)
+
+            {
+
+
+
+                    
+
+
+                    target = null;
+            waterTarget = null;
+
+            repoStartTime += 50;
+
+            Debug.Log("SLUTS");
+
+                int babySpiderSize = Random.Range(3, 3);
+
+
+
+                for (int i = 0; i < babySpiderCount; i++)
+
+                {
+
+
+
+                    int xXGroundThreePos = Random.Range(0, 50);
+                    int zZGroundThreePos = Random.Range(0, 50);
+
+
+                    Vector3 pos = new Vector3(currentX, 0, currentZ) + transform.position * cubeSpawnRadius;
+                    Vector3 groundPos = new Vector3(currentX, 0, currentZ);
+
+                    RaycastHit hit;
+
+                    Physics.Raycast(pos, Vector3.down, out hit, raycastDistance);
+
+                    if (!Physics.CheckSphere(groundPos, spawnCollisionCheckRadius, GroundLayer))
+                    {
+                        GameObject insbabySpider = Instantiate(babySpider, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+
+                        babySpider.transform.localScale = new Vector3(babySpiderSize, babySpiderSize, babySpiderSize);
+
+                    }
+
+
+
+
+
+
+
+
+                    AIFollow AIFollow = GetComponent<AIFollow>();
+                    AIFollow.FindTarget();
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+                }
+
+
+            
+
+        }
+
+        if (collision.gameObject.tag.Equals("Water"))
+        {
+            target = null;
+            repoTarget = null;
+
+
+            waterStartTime += 50;
+            Debug.Log("SLURP");
+
+            Instantiate(waterParticals, transform.position, Quaternion.identity);
+        }
+
+
+
+    }
+
+    public void Rest()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+}
