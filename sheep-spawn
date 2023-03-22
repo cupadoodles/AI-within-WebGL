@@ -1,0 +1,190 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FlySpawn : MonoBehaviour
+{
+
+
+    public GameObject bait;
+    public float baitsSpawnCollisionCheckRadius;
+    public float baitraycastDistance = 5f;
+
+
+    //public int rocksCount;
+    public GameObject sheep;
+    public float spawnRadius;
+    public float spawnCollisionCheckRadius;
+    public LayerMask GroundLayer;
+    public float raycastDistance = 5f;
+
+    //GRASS
+    public GameObject grass;
+    public float grassspawnRadius;
+    public float grassSpawnCollisionCheckRadius;
+    public float grassraycastDistance = 5f;
+
+    //public int cubeCount;
+    public GameObject cubes;
+    public float cubeSpawnRadius;
+    public float cubeSpawnCollisionCheckRadius;
+    public float cubeRaycastDistance = 5f;
+
+    public GameObject resoawn;
+
+    private void Start()
+
+    {
+        int grassCount = Random.Range(40, 70);
+        int grassSize = Random.Range(0, 1);
+
+
+        for (int i = 0; i < grassCount; i++)
+        {
+
+
+            int xGroundThreePos = Random.Range(0, 300);
+            int zGroundThreePos = Random.Range(0, 300);
+
+            Vector3 pos = new Vector3(xGroundThreePos, 5, zGroundThreePos) + transform.position * grassspawnRadius;
+            Vector3 groundPos = new Vector3(xGroundThreePos, 5, zGroundThreePos);
+
+            RaycastHit hit;
+
+            Physics.Raycast(pos, Vector3.down, out hit, grassraycastDistance);
+
+            if (!Physics.CheckSphere(groundPos, grassSpawnCollisionCheckRadius, GroundLayer))
+            {
+                GameObject insgrass = Instantiate(grass, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+                grass.transform.localScale = new Vector3(grassSize, grassSize, grassSize);
+
+            }
+
+
+
+        }
+
+        int resoawnCount = Random.Range(1, 5);
+
+
+        for (int i = 0; i < resoawnCount; i++)
+        {
+
+
+            int xGroundThreePos = Random.Range(0, 300);
+            int zGroundThreePos = Random.Range(0, 300);
+
+            Vector3 pos = new Vector3(xGroundThreePos, -9, zGroundThreePos) + transform.position * grassspawnRadius;
+            Vector3 groundPos = new Vector3(xGroundThreePos, -9, zGroundThreePos);
+
+            RaycastHit hit;
+
+            Physics.Raycast(pos, Vector3.down, out hit, baitraycastDistance);
+
+            if (!Physics.CheckSphere(groundPos, grassSpawnCollisionCheckRadius, GroundLayer))
+            {
+                GameObject insresoawn = Instantiate(resoawn, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+
+            }
+
+
+
+        }
+
+
+        int baitCount = Random.Range(200, 300);
+            int baitsSize = Random.Range(1, 2);
+
+
+            for (int i = 0; i < baitCount; i++)
+            {
+
+
+                int xGroundThreePos = Random.Range(0, 300);
+                int zGroundThreePos = Random.Range(0, 300);
+
+                Vector3 pos = new Vector3(xGroundThreePos, -7, zGroundThreePos) + transform.position * grassspawnRadius;
+                Vector3 groundPos = new Vector3(xGroundThreePos, -7, zGroundThreePos);
+
+                RaycastHit hit;
+
+                Physics.Raycast(pos, Vector3.down, out hit, baitraycastDistance);
+
+                if (!Physics.CheckSphere(groundPos, grassSpawnCollisionCheckRadius, GroundLayer))
+                {
+                    GameObject insbait = Instantiate(bait, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+
+                }
+
+
+
+            }
+
+            {
+                int sheepCount = Random.Range(25, 40);
+                int sheepSize = Random.Range(2, 2);
+
+
+                for (int i = 0; i < sheepCount; i++)
+                {
+
+
+                    int xGroundThreePos = Random.Range(0, 300);
+                    int zGroundThreePos = Random.Range(0, 300);
+
+                    Vector3 pos = new Vector3(xGroundThreePos, 0, zGroundThreePos) + transform.position * spawnRadius;
+                    Vector3 groundPos = new Vector3(xGroundThreePos, 0, zGroundThreePos);
+
+                    RaycastHit hit;
+
+                    Physics.Raycast(pos, Vector3.down, out hit, raycastDistance);
+
+                    if (!Physics.CheckSphere(groundPos, spawnCollisionCheckRadius, GroundLayer))
+                    {
+                        GameObject inssheep = Instantiate(sheep, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+                        sheep.transform.localScale = new Vector3(sheepSize, sheepSize, sheepSize);
+
+                    }
+
+
+
+                }
+
+                int CubeCount = Random.Range(2, 2);
+                int SpiderSizeAdult = Random.Range(5, 5);
+
+
+                for (int i = 0; i < CubeCount; i++)
+                {
+
+
+                    int xXGroundThreePos = Random.Range(0, 300);
+                    int zZGroundThreePos = Random.Range(0, 300);
+
+
+
+
+                    Vector3 pos = new Vector3(xXGroundThreePos, 0, zZGroundThreePos) + transform.position * cubeSpawnRadius;
+                    Vector3 groundPos = new Vector3(xXGroundThreePos, 0, zZGroundThreePos);
+
+                    RaycastHit hit;
+                    Physics.Raycast(pos, Vector3.down, out hit, raycastDistance);
+
+                    if (!Physics.CheckSphere(groundPos, spawnCollisionCheckRadius, GroundLayer))
+                    {
+
+                        GameObject inscubes = Instantiate(cubes, groundPos, Quaternion.Euler(new Vector3(0, Random.Range(0, 360), 0)));
+                        cubes.transform.localScale = new Vector3(SpiderSizeAdult, SpiderSizeAdult, SpiderSizeAdult);
+
+
+                    }
+
+
+
+                
+            }
+
+
+        }
+    }
+}
